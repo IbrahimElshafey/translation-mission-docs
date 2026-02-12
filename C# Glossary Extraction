@@ -1,0 +1,73 @@
+Since you're using **C#**, you can achieve professional-grade extraction by leveraging the **ML.NET** ecosystem or, more commonly, the **SharpNLP** or **SpaCyDotNet** wrappers.
+
+For translation purposes, you don't just want raw frequency; you want to identify **Noun Phrases** (terminology) and **Statistical Collocations** (co-occurrences).
+
+### The C# Architecture for Extraction
+
+To build this, you should follow a pipeline that moves from raw string data to structured linguistic objects.
+
+1. **Tokenization:** Breaking sentences into words.
+2. **POS Tagging (Part-of-Speech):** Identifying nouns, verbs, and adjectives.
+3. **Chunking:** Grouping "Adjective + Noun" or "Noun + Noun" (e.g., "Internal Combustion Engine").
+4. **Collocation Calculation:** Using a Log-Likelihood or T-Score algorithm.
+
+---
+
+### Implementation Example (using `spaCy` via `Python.Included`)
+
+While C# is your language, the most accurate linguistic models are often Python-based. You can run these directly within your C# environment using the `SpaCyDotNet` library or a `Process` wrapper.
+
+```csharp
+using SpacyDotNet;
+
+public void ExtractTerminology(string text)
+{
+    var spacy = new Spacy();
+    var nlp = spacy.Load("en_core_web_sm");
+    var doc = nlp.GetDocument(text);
+
+    // 1. Extracting Multi-word Terminology (Noun Chunks)
+    var terminology = doc.NounChunks
+        .Where(chunk => chunk.Words.Count() > 1) // Focus on compound terms
+        .Select(chunk => chunk.Text.ToLower().Trim())
+        .GroupBy(x => x)
+        .OrderByDescending(g => g.Count());
+
+    // 2. Extracting Named Entities (Locations, Orgs, Products)
+    var entities = doc.Ents
+        .Where(e => e.Label == "PRODUCT" || e.Label == "ORG")
+        .Select(e => e.Text);
+}
+
+```
+
+### Advanced Co-occurrence Logic
+
+To find **Co-occurrences** (words that appear near each other frequently but aren't necessarily a "phrase"), you should implement a **Sliding Window** algorithm.
+
+1. Define a window size (usually 5 words).
+2. As you slide through the book, create a `Dictionary<Tuple<string, string>, int>` to store pairs.
+3. Calculate the **Pointwise Mutual Information (PMI)**:
+
+
+
+*Where  is the probability of words  and  appearing together, and  and  are their individual probabilities.*
+
+---
+
+### Recommended Libraries for C#
+
+If you prefer to stay purely within the .NET ecosystem without Python wrappers:
+
+* **Catalyst:** A high-performance Natural Language Processing (NLP) library built in C#. It is excellent for entity recognition and fast tokenization.
+* **OpenNLP.NET:** A port of the Java OpenNLP tools. Good for POS tagging and chunking.
+* **Lucene.NET:** While a search engine, its `ShingleFilter` is perfect for generating n-grams (multi-word terms) very quickly from large books.
+
+### Summary Checklist for Translation Accuracy
+
+* [ ] **Filter Stopwords:** Use a list to ignore "the", "is", "at".
+* [ ] **Lemmatization:** Convert "running", "ran", and "runs" to "run" before counting.
+* [ ] **Casing:** Treat "Algorithm" and "algorithm" as the same term.
+* [ ] **Thresholding:** Only include terms that appear more than  times (e.g., ).
+
+**Would you like me to provide a full C# class using the Catalyst library to extract these terms, or should we focus on the mathematical implementation of the PMI score for co-occurrences?**
