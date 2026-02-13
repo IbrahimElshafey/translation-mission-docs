@@ -1,0 +1,15 @@
+- **EN → AR Translation Pipeline**
+
+- [Overview](/)
+- **Pipeline Phases**
+  - [A — Extract & Map](phase-a-extract-map.md)
+  - [B — Protect & Mask](phase-b-protect-mask.md)
+  - [C — Glossary Mining](phase-c-glossary-mining.md)
+  - [C2 — Context & Embedding](phase-c2-context-embedding.md)
+  - [D — Translate](phase-d-translate.md)
+  - [E — Validate](phase-e-validate.md)
+  - [F — Semantic Gate](phase-f-semantic-gate.md)
+  - [G — Human Review (HITL)](phase-g-hitl.md)
+  - [H — Restore & Publish](phase-h-restore-publish.md)
+- **Reference**
+  - [External Resources](resources.md)
